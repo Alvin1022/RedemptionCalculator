@@ -86,7 +86,7 @@
       background-color: var(--bg-base);
       color: var(--ink);
       line-height: 1.55;
-      padding: 20px 16px 64px;
+      padding: calc(20px + env(safe-area-inset-top)) 16px calc(56px + env(safe-area-inset-bottom));
       position: relative;
       overflow-x: hidden;
       transition: background-color 0.35s ease, color 0.35s ease;
@@ -118,7 +118,7 @@
     }
 
     .container {
-      max-width: 1140px;
+      max-width: 1160px;
       margin: 0 auto;
     }
 
@@ -142,15 +142,17 @@
       gap: 16px;
       flex-wrap: wrap;
     }
+    .hero-text { flex: 1; min-width: 240px; }
     .hero-text h1 {
       margin: 0 0 6px;
-      font-size: 22px;
+      font-size: clamp(18px, 2.5vw, 22px);
       font-weight: 750;
       letter-spacing: -0.2px;
       color: var(--ink-strong);
       display: flex;
       align-items: center;
       gap: 8px;
+      line-height: 1.3;
     }
     .hero-text p {
       margin: 0;
@@ -179,6 +181,7 @@
       align-items: center;
       gap: 6px;
       padding: 8px 14px;
+      min-height: 38px;
       border-radius: 999px;
       border: 1px solid var(--glass-border);
       background: var(--glass-inner);
@@ -187,6 +190,7 @@
       font-size: 13px;
       font-weight: 600;
       cursor: pointer;
+      white-space: nowrap;
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
       transition: transform 0.15s ease, background 0.2s ease;
@@ -200,7 +204,10 @@
       gap: 18px;
       align-items: start;
     }
-    @media (max-width: 920px) {
+    @media (max-width: 1024px) {
+      .grid-main { grid-template-columns: 330px 1fr; }
+    }
+    @media (max-width: 860px) {
       .grid-main { grid-template-columns: 1fr; }
     }
 
@@ -293,7 +300,8 @@
     .seg-btn {
       border: none;
       background: transparent;
-      padding: 8px 6px;
+      padding: 9px 6px;
+      min-height: 38px;
       border-radius: 10px;
       font-size: 13px;
       font-weight: 600;
@@ -313,9 +321,6 @@
       grid-template-columns: repeat(3, 1fr);
       gap: 12px;
       margin-bottom: 16px;
-    }
-    @media (max-width: 640px) {
-      .kpi-grid { grid-template-columns: 1fr; }
     }
     .kpi {
       padding: 15px 18px;
@@ -375,6 +380,7 @@
       gap: 8px;
     }
 
+    /* Desktop Table View */
     table {
       width: 100%;
       border-collapse: collapse;
@@ -427,9 +433,6 @@
       gap: 8px;
       margin-top: 8px;
     }
-    @media (max-width: 640px) {
-      .price-grid { grid-template-columns: 1fr; }
-    }
     .price-mini label { font-size: 11.5px; color: var(--muted); margin-bottom: 4px; display: block; }
     .price-mini input { padding: 8px 10px; font-size: 13.5px; border-radius: 11px; }
 
@@ -446,6 +449,108 @@
       margin-top: 6px;
       font-size: 11.8px;
       color: var(--muted);
+    }
+
+    /* ============ Mobile Adaptive Styles (iPhone / Android <= 768px) ============ */
+    @media (max-width: 768px) {
+      body {
+        padding: calc(12px + env(safe-area-inset-top)) 12px calc(40px + env(safe-area-inset-bottom));
+      }
+      .glass { border-radius: 18px; }
+      header.glass-hero {
+        padding: 16px 18px;
+        gap: 12px;
+      }
+      .badge-row { display: none; } /* 手機版精簡頂部標籤以保留首屏空間 */
+      .panel, .section-card { padding: 16px; }
+
+      /* 防止 iOS Safari 點擊輸入框自動放大頁面 */
+      input[type="number"], input[type="text"], .price-mini input {
+        font-size: 16px;
+        min-height: 44px;
+      }
+      .price-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+      .price-mini input { padding: 8px 6px; font-size: 14px; }
+
+      /* 手機版熱門國家改為橫向滑動膠囊列，不佔垂直空間 */
+      .quick-tags {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 4px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+      .quick-tags::-webkit-scrollbar { display: none; }
+      .tag-btn {
+        flex: 0 0 auto;
+        min-height: 34px;
+        padding: 6px 12px;
+      }
+
+      /* KPI 手機版：前兩個並排、第三個滿版 */
+      .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+      .kpi:nth-child(3) { grid-column: 1 / -1; }
+      .kpi { padding: 12px 14px; border-radius: 16px; }
+      .kpi .k-val { font-size: 19px; }
+
+      /* 關鍵：把桌面版表格在手機自動轉為卡片式清單，免橫向捲動 */
+      table, thead, tbody, tr, td { display: block; width: 100%; }
+      thead { display: none; }
+      tbody tr {
+        background: var(--glass-inner);
+        border: 1px solid var(--glass-border);
+        border-radius: 16px;
+        padding: 12px 14px;
+        margin-bottom: 10px;
+        box-shadow: var(--glass-highlight);
+      }
+      tbody tr:last-child { margin-bottom: 0; }
+      tbody td {
+        border-bottom: 1px solid var(--glass-border-subtle);
+        padding: 7px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        text-align: right;
+        font-size: 13.5px;
+      }
+      tbody td:first-child {
+        font-size: 14.5px;
+        padding-top: 2px;
+        padding-bottom: 9px;
+        text-align: left;
+        justify-content: flex-start;
+        color: var(--ink-strong);
+      }
+      tbody td:last-child {
+        border-bottom: none;
+        padding-bottom: 2px;
+      }
+      tbody td[data-label]::before {
+        content: attr(data-label);
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--muted);
+        text-align: left;
+        flex-shrink: 0;
+      }
+      tbody td.na-cell {
+        text-align: left;
+        justify-content: flex-start;
+        font-size: 12.5px;
+        padding: 6px 0 2px;
+        border-bottom: none;
+      }
+      .spend-helper { text-align: right; }
+    }
+
+    @media (max-width: 390px) {
+      .price-grid { grid-template-columns: 1fr; }
+      .seg-btn { font-size: 12px; padding: 8px 4px; }
     }
   </style>
 </head>
@@ -540,12 +645,12 @@
     <div>
       <div class="kpi-grid">
         <div class="glass kpi">
-          <div class="k-label">華航＋旅人卡 合計最高可用</div>
+          <div class="k-label">華航＋旅人卡 合計可用</div>
           <div class="k-val" id="kpiTotalMiles">0 哩</div>
           <div class="k-sub" id="kpiTotalSub"></div>
         </div>
         <div class="glass kpi">
-          <div class="k-label">旅人卡本次可轉出上限</div>
+          <div class="k-label">旅人卡可轉出上限</div>
           <div class="k-val" id="kpiHsbcUsable">0 哩</div>
           <div class="k-sub" id="kpiHsbcSub"></div>
         </div>
@@ -566,7 +671,7 @@
           <span>🎫 方案 A：直接兌換「免費酬賓機票」</span>
           <span style="font-size:12px; font-weight:500; color:var(--muted);" id="rewardRuleLabel"></span>
         </h3>
-        <div style="overflow-x:auto;">
+        <div>
           <table>
             <thead>
               <tr>
@@ -590,7 +695,7 @@
           <span>🥂 方案 B：現金買票 ＋ 哩程「座艙升等」</span>
           <span style="font-size:12px; font-weight:500; color:var(--muted);" id="upgradeRuleLabel"></span>
         </h3>
-        <div style="overflow-x:auto;">
+        <div>
           <table>
             <thead>
               <tr>
@@ -809,7 +914,7 @@
         shortfall: 0,
         needHsbc: 0,
         statusHtml: `<span class="status-pill st-ok">✅ 華航現有哩程足夠</span>`,
-        transferHtml: `<strong>0 點</strong>（旅人卡全部保留）`
+        transferHtml: `<strong>0 點</strong>（旅人卡全留）`
       };
     }
 
@@ -831,7 +936,7 @@
       const totalGap = requiredMiles - totalAvail;
       const hsbcNote = hsbcPoints < 3000
         ? `旅人卡尚差 ${formatNum(3000 - hsbcPoints)} 點才達 3,000 起轉門檻`
-        : `若全轉後仍缺 <strong>${formatNum(totalGap)} 哩</strong>`;
+        : `全轉後仍缺 <strong>${formatNum(totalGap)} 哩</strong>`;
       const twdNeededOvs = totalGap * 15;
       const twdNeededDom = totalGap * 18;
       return {
@@ -872,9 +977,9 @@
     el("zoneBadge").textContent = `已辨識航線分區：${z.name}（${z.desc}）`;
 
     el("kpiTotalMiles").textContent = `${formatNum(totalAvail)} 哩`;
-    el("kpiTotalSub").textContent = `華航 ${formatNum(ciMiles)} ＋ 旅人卡可轉 ${formatNum(maxHsbcTransfer)}`;
+    el("kpiTotalSub").textContent = `華航 ${formatNum(ciMiles)} ＋ 旅人卡 ${formatNum(maxHsbcTransfer)}`;
     el("kpiHsbcUsable").textContent = `${formatNum(maxHsbcTransfer)} 哩`;
-    el("kpiHsbcSub").textContent = hsbcPoints >= 3000 ? `以 500 點為單位，1:1 等值轉入` : `需滿 3,000 點方可轉點`;
+    el("kpiHsbcSub").textContent = hsbcPoints >= 3000 ? `500 點為單位，1:1 轉入` : `需滿 3,000 點方可轉點`;
     el("kpiZoneName").textContent = z.name;
     el("kpiZoneSub").textContent = state.tripType === "round" ? "目前試算：來回行程" : "目前試算：單程／單段升等";
 
@@ -902,7 +1007,7 @@
     let rewardHtml = "";
     rewardRows.forEach(item => {
       if (!item.raw) {
-        rewardHtml += `<tr><td>${item.name}</td><td colspan="4" style="color:var(--muted)">此航線無提供此艙等酬賓機票</td></tr>`;
+        rewardHtml += `<tr><td><strong>${item.name}</strong></td><td colspan="4" class="na-cell" style="color:var(--muted)">此航線無提供此艙等酬賓機票</td></tr>`;
         return;
       }
       const req = Math.round(item.raw * tripMult);
@@ -921,10 +1026,10 @@
       rewardHtml += `
         <tr>
           <td><strong>${item.name}</strong></td>
-          <td><strong>${formatNum(req)}</strong> 哩</td>
-          <td>${res.statusHtml}</td>
-          <td>${res.transferHtml}</td>
-          <td>${renderCpBadge(cp)}<br><small style="color:var(--muted)">約省票價 $${formatNum(netSaved)}（扣稅後）</small></td>
+          <td data-label="所需哩程"><strong>${formatNum(req)}</strong> 哩</td>
+          <td data-label="狀態與還差"><div>${res.statusHtml}</div></td>
+          <td data-label="旅人卡建議轉出"><div>${res.transferHtml}</div></td>
+          <td data-label="預估每哩價值"><div>${renderCpBadge(cp)}<br><small style="color:var(--muted)">約省票價 $${formatNum(netSaved)}（扣稅後）</small></div></td>
         </tr>`;
     });
     el("rewardTbody").innerHTML = rewardHtml;
@@ -966,7 +1071,7 @@
     upgradeRows.forEach(item => {
       if (!item.seg) {
         if (!z.hasPe && item.name.includes("豪經")) return;
-        upgradeHtml += `<tr><td>${item.name}</td><td colspan="4" style="color:var(--muted)">華航規定此航線／艙等不適用直接升等</td></tr>`;
+        upgradeHtml += `<tr><td><strong>${item.name}</strong></td><td colspan="4" class="na-cell" style="color:var(--muted)">華航規定此航線／艙等不適用直接升等</td></tr>`;
         return;
       }
       const req = item.seg * segMult;
@@ -984,10 +1089,10 @@
       upgradeHtml += `
         <tr>
           <td><strong>${item.name}</strong></td>
-          <td><strong>${formatNum(req)}</strong> 哩</td>
-          <td>${res.statusHtml}</td>
-          <td>${res.transferHtml}</td>
-          <td>${renderCpBadge(cp)}<br><small style="color:var(--muted)">約省艙等價差 $${formatNum(Math.round(item.savedDiff))}</small></td>
+          <td data-label="所需哩程"><strong>${formatNum(req)}</strong> 哩</td>
+          <td data-label="狀態與還差"><div>${res.statusHtml}</div></td>
+          <td data-label="旅人卡建議轉出"><div>${res.transferHtml}</div></td>
+          <td data-label="升等每哩價值"><div>${renderCpBadge(cp)}<br><small style="color:var(--muted)">約省艙等價差 $${formatNum(Math.round(item.savedDiff))}</small></div></td>
         </tr>`;
     });
     el("upgradeTbody").innerHTML = upgradeHtml;
