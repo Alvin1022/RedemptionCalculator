@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>華航哩程 × 滙豐旅人御璽卡｜Liquid Glass 試算</title>
+  <style>
+    :root {
+      /* Light Glass (iOS / Android Frost) */
+      --bg-base: #eef2ff;
+      --ink: #0f172a;
+      --ink-strong: #020617;
+      --muted: #475569;
+      --glass-bg: rgba(255, 255, 255, 0.58);
+      --glass-bg-hover: rgba(255, 255, 255, 0.74);
+      --glass-inner: rgba(255, 255, 255, 0.52);
+      --glass-input: rgba(255, 255, 255, 0.72);
+      --glass-border: rgba(255, 255, 255, 0.75);
+      --glass-border-subtle: rgba(15, 23, 42, 0.08);
+      --glass-highlight: inset 0 1px 1px rgba(255, 255, 255, 0.92), inset 0 -1px 1px rgba(15, 23, 42, 0.04);
+      --shadow-glass: 0 12px 36px rgba(15, 23, 42, 0.09), 0 2px 8px rgba(15, 23, 42, 0.04);
+      --navy: #1e3a8a;
+      --accent: #2563eb;
+      --plum: #be185d;
+      --good-bg: rgba(16, 185, 129, 0.16);
+      --good-ink: #065f46;
+      --good-line: rgba(16, 185, 129, 0.42);
+      --warn-bg: rgba(245, 158, 11, 0.16);
+      --warn-ink: #92400e;
+      --warn-line: rgba(245, 158, 11, 0.45);
+      --bad-bg: rgba(239, 68, 68, 0.14);
+      --bad-ink: #991b1b;
+      --bad-line: rgba(239, 68, 68, 0.36);
+      --cp-high-bg: rgba(37, 99, 235, 0.16);
+      --cp-high-ink: #1d4ed8;
+      --cp-mid-bg: rgba(100, 116, 139, 0.15);
+      --cp-mid-ink: #334155;
+      --orb-1: rgba(59, 130, 246, 0.42);
+      --orb-2: rgba(219, 39, 119, 0.30);
+      --orb-3: rgba(14, 165, 233, 0.34);
+      --orb-4: rgba(245, 158, 11, 0.22);
+    }
+
+    [data-theme="dark"] {
+      /* Dark Glass (iOS Dark Liquid Glass / Android Material You Dark) */
+      --bg-base: #070b14;
+      --ink: #e2e8f0;
+      --ink-strong: #ffffff;
+      --muted: #94a3b8;
+      --glass-bg: rgba(20, 28, 46, 0.56);
+      --glass-bg-hover: rgba(30, 41, 66, 0.68);
+      --glass-inner: rgba(15, 23, 42, 0.52);
+      --glass-input: rgba(15, 23, 42, 0.65);
+      --glass-border: rgba(255, 255, 255, 0.16);
+      --glass-border-subtle: rgba(255, 255, 255, 0.09);
+      --glass-highlight: inset 0 1px 1px rgba(255, 255, 255, 0.20), inset 0 -1px 1px rgba(0, 0, 0, 0.35);
+      --shadow-glass: 0 16px 40px rgba(0, 0, 0, 0.45), 0 2px 10px rgba(0, 0, 0, 0.25);
+      --navy: #93c5fd;
+      --accent: #60a5fa;
+      --plum: #f472b6;
+      --good-bg: rgba(16, 185, 129, 0.18);
+      --good-ink: #6ee7b7;
+      --good-line: rgba(52, 211, 153, 0.38);
+      --warn-bg: rgba(245, 158, 11, 0.18);
+      --warn-ink: #fcd34d;
+      --warn-line: rgba(251, 191, 36, 0.38);
+      --bad-bg: rgba(239, 68, 68, 0.18);
+      --bad-ink: #fca5a5;
+      --bad-line: rgba(248, 113, 113, 0.35);
+      --cp-high-bg: rgba(59, 130, 246, 0.26);
+      --cp-high-ink: #93c5fd;
+      --cp-mid-bg: rgba(148, 163, 184, 0.18);
+      --cp-mid-ink: #cbd5e1;
+      --orb-1: rgba(37, 99, 235, 0.36);
+      --orb-2: rgba(190, 24, 93, 0.28);
+      --orb-3: rgba(6, 182, 212, 0.25);
+      --orb-4: rgba(217, 119, 6, 0.16);
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+      background-color: var(--bg-base);
+      color: var(--ink);
+      line-height: 1.55;
+      padding: 20px 16px 64px;
+      position: relative;
+      overflow-x: hidden;
+      transition: background-color 0.35s ease, color 0.35s ease;
+    }
+
+    /* Ambient Mesh Orbs behind glass */
+    .ambient-bg {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(72px);
+      opacity: 0.9;
+      animation: floatOrb 18s ease-in-out infinite alternate;
+    }
+    .orb-1 { width: 520px; height: 520px; background: var(--orb-1); top: -140px; left: -100px; }
+    .orb-2 { width: 460px; height: 460px; background: var(--orb-2); top: 12%; right: -120px; animation-delay: -5s; }
+    .orb-3 { width: 420px; height: 420px; background: var(--orb-3); bottom: -100px; left: 22%; animation-delay: -9s; }
+    .orb-4 { width: 320px; height: 320px; background: var(--orb-4); bottom: 18%; right: 18%; animation-delay: -13s; }
+
+    @keyframes floatOrb {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(28px, -24px) scale(1.07); }
+    }
+
+    .container {
+      max-width: 1140px;
+      margin: 0 auto;
+    }
+
+    /* Glass Surface Mixin */
+    .glass {
+      background: var(--glass-bg);
+      backdrop-filter: blur(26px) saturate(185%);
+      -webkit-backdrop-filter: blur(26px) saturate(185%);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--shadow-glass), var(--glass-highlight);
+      border-radius: 22px;
+      transition: background 0.25s ease, transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    header.glass-hero {
+      padding: 22px 26px;
+      margin-bottom: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .hero-text h1 {
+      margin: 0 0 6px;
+      font-size: 22px;
+      font-weight: 750;
+      letter-spacing: -0.2px;
+      color: var(--ink-strong);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .hero-text p {
+      margin: 0;
+      font-size: 13.5px;
+      color: var(--muted);
+    }
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .header-pill {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 11px;
+      border-radius: 999px;
+      background: var(--glass-inner);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--glass-highlight);
+      color: var(--ink);
+    }
+
+    .theme-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--glass-border);
+      background: var(--glass-inner);
+      box-shadow: var(--glass-highlight);
+      color: var(--ink-strong);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      transition: transform 0.15s ease, background 0.2s ease;
+    }
+    .theme-toggle:hover { transform: translateY(-1px); background: var(--glass-bg-hover); }
+    .theme-toggle:active { transform: scale(0.97); }
+
+    .grid-main {
+      display: grid;
+      grid-template-columns: 370px 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+    @media (max-width: 920px) {
+      .grid-main { grid-template-columns: 1fr; }
+    }
+
+    .panel {
+      padding: 20px 22px;
+    }
+    .panel h2 {
+      margin: 0 0 16px;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--ink-strong);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .field { margin-bottom: 15px; }
+    .field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--ink);
+    }
+    .field small {
+      display: block;
+      font-size: 11.5px;
+      color: var(--muted);
+      margin-top: 5px;
+    }
+
+    input[type="number"], input[type="text"] {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--ink-strong);
+      background: var(--glass-input);
+      box-shadow: inset 0 1px 3px rgba(15, 23, 42, 0.05);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
+    }
+    input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3.5px rgba(37, 99, 235, 0.18);
+    }
+
+    .quick-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 9px;
+    }
+    .tag-btn {
+      border: 1px solid var(--glass-border);
+      background: var(--glass-inner);
+      box-shadow: var(--glass-highlight);
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 6px 11px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .tag-btn:hover { transform: translateY(-1px); background: var(--glass-bg-hover); }
+    .tag-btn.active {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: #fff;
+      border-color: rgba(255,255,255,0.4);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.32), inset 0 1px 1px rgba(255,255,255,0.4);
+    }
+
+    /* iOS Segmented Control */
+    .segmented {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 4px;
+      background: var(--glass-inner);
+      border: 1px solid var(--glass-border-subtle);
+      padding: 4px;
+      border-radius: 14px;
+      box-shadow: inset 0 1px 3px rgba(15, 23, 42, 0.06);
+    }
+    .segmented.three { grid-template-columns: repeat(3, 1fr); }
+    .seg-btn {
+      border: none;
+      background: transparent;
+      padding: 8px 6px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .seg-btn.active {
+      background: var(--glass-bg-hover);
+      color: var(--ink-strong);
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08), var(--glass-highlight);
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 640px) {
+      .kpi-grid { grid-template-columns: 1fr; }
+    }
+    .kpi {
+      padding: 15px 18px;
+      border-radius: 20px;
+    }
+    .kpi .k-label { font-size: 12px; font-weight: 600; color: var(--muted); }
+    .kpi .k-val { font-size: 22px; font-weight: 750; color: var(--navy); margin: 4px 0; letter-spacing: -0.3px; }
+    .kpi .k-sub { font-size: 11.5px; color: var(--muted); }
+
+    .verdict-box {
+      border-radius: 22px;
+      padding: 18px 22px;
+      margin-bottom: 18px;
+      backdrop-filter: blur(26px) saturate(185%);
+      -webkit-backdrop-filter: blur(26px) saturate(185%);
+      border: 1px solid var(--good-line);
+      background: var(--good-bg);
+      color: var(--good-ink);
+      box-shadow: var(--shadow-glass), inset 0 1px 1px rgba(255,255,255,0.45);
+    }
+    .verdict-box.warn {
+      border-color: var(--warn-line);
+      background: var(--warn-bg);
+      color: var(--warn-ink);
+    }
+    .verdict-title {
+      font-size: 16px;
+      font-weight: 750;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .verdict-body {
+      font-size: 13.5px;
+      line-height: 1.65;
+    }
+    .verdict-body ul {
+      margin: 8px 0 0;
+      padding-left: 18px;
+    }
+    .verdict-body li { margin-bottom: 4px; }
+
+    .section-card {
+      padding: 20px 22px;
+      margin-bottom: 18px;
+    }
+    .section-card h3 {
+      margin: 0 0 14px;
+      font-size: 15.5px;
+      font-weight: 700;
+      color: var(--ink-strong);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.2px;
+    }
+    th, td {
+      padding: 11px 10px;
+      border-bottom: 1px solid var(--glass-border-subtle);
+      text-align: left;
+      vertical-align: middle;
+    }
+    th {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 600;
+      background: var(--glass-inner);
+    }
+    th:first-child { border-radius: 10px 0 0 10px; }
+    th:last-child { border-radius: 0 10px 10px 0; }
+    tr:last-child td { border-bottom: none; }
+
+    .status-pill {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 600;
+      white-space: nowrap;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    .st-ok { background: var(--good-bg); color: var(--good-ink); border: 1px solid var(--good-line); }
+    .st-near { background: var(--warn-bg); color: var(--warn-ink); border: 1px solid var(--warn-line); }
+    .st-no { background: var(--bad-bg); color: var(--bad-ink); border: 1px solid var(--bad-line); }
+
+    .cp-badge {
+      display: inline-block;
+      padding: 3px 9px;
+      border-radius: 8px;
+      font-size: 11.5px;
+      font-weight: 700;
+    }
+    .cp-high { background: var(--cp-high-bg); color: var(--cp-high-ink); }
+    .cp-mid { background: var(--cp-mid-bg); color: var(--cp-mid-ink); }
+    .cp-low { background: var(--bad-bg); color: var(--bad-ink); }
+
+    .price-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 8px;
+    }
+    @media (max-width: 640px) {
+      .price-grid { grid-template-columns: 1fr; }
+    }
+    .price-mini label { font-size: 11.5px; color: var(--muted); margin-bottom: 4px; display: block; }
+    .price-mini input { padding: 8px 10px; font-size: 13.5px; border-radius: 11px; }
+
+    .note-box {
+      background: var(--glass-inner);
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+      padding: 12px 15px;
+      font-size: 12.5px;
+      color: var(--muted);
+      margin-top: 14px;
+    }
+    .spend-helper {
+      margin-top: 6px;
+      font-size: 11.8px;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+<div class="ambient-bg">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+</div>
+
+<div class="container">
+  <header class="glass glass-hero">
+    <div class="hero-text">
+      <h1>✈️ 華航哩程 × 滙豐旅人御璽卡｜換機票 vs. 升等試算</h1>
+      <p>依據中華航空 2026/09/16 最新三段式動態酬賓機票標準、座艙升等表與滙豐旅人卡 1:1 轉點規則即時評估</p>
+      <div class="badge-row">
+        <span class="header-pill">旅人卡轉華航 1:1（3,000 點起轉，500 點為單位）</span>
+        <span class="header-pill">旅人御璽卡：國內 NT$18/點・海外 NT$15/點</span>
+        <span class="header-pill">華航哩程 3 年效期｜建議只轉剛好夠用點數</span>
+      </div>
+    </div>
+    <button type="button" class="theme-toggle" id="themeToggle" aria-label="切換深淺玻璃模式">
+      <span id="themeIcon">🌙</span>
+      <span id="themeLabel">深色玻璃</span>
+    </button>
+  </header>
+
+  <div class="grid-main">
+    <!-- 左側輸入區 -->
+    <div class="glass panel">
+      <h2>1. 輸入現有哩程與目的地</h2>
+
+      <div class="field">
+        <label for="ciMiles">目前華航帳戶哩程（哩）</label>
+        <input type="number" id="ciMiles" min="0" step="500" value="15000" />
+        <small>華夏哩程酬賓計劃帳戶內的現有可用哩程。</small>
+      </div>
+
+      <div class="field">
+        <label for="hsbcPoints">目前滙豐旅人御璽卡旅遊積分（點）</label>
+        <input type="number" id="hsbcPoints" min="0" step="100" value="18000" />
+        <small id="hsbcTransferNote"></small>
+      </div>
+
+      <div class="field">
+        <label for="destInput">想去的國家或城市</label>
+        <input type="text" id="destInput" placeholder="輸入國家或城市，如：越南、東京、美國、巴黎..." value="越南（河內／胡志明）" />
+        <div class="quick-tags" id="quickTags"></div>
+        <small id="zoneBadge"></small>
+      </div>
+
+      <div class="field">
+        <label>行程類型（酬賓機票／升等計算方式）</label>
+        <div class="segmented" id="tripTypeSeg">
+          <button type="button" class="seg-btn active" data-val="round">來回（Round-trip）</button>
+          <button type="button" class="seg-btn" data-val="oneway">單程（或只升一程）</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>酬賓機票機位供需級別（2026/09 新制）</label>
+        <div class="segmented three" id="tierSeg">
+          <button type="button" class="seg-btn active" data-val="abundant">充足（最省）</button>
+          <button type="button" class="seg-btn" data-val="limited">有限</button>
+          <button type="button" class="seg-btn" data-val="scarce">稀少/候補</button>
+        </div>
+        <small>「充足」所需哩程最少；旺季熱門航班多為「有限」或「稀少」。</small>
+      </div>
+
+      <div class="field" style="margin-bottom: 4px;">
+        <label>現金票價參考（可改為實際查到的含稅票價）</label>
+        <div class="price-grid">
+          <div class="price-mini">
+            <label for="priceEco">經濟艙 (K/V/T)</label>
+            <input type="number" id="priceEco" min="0" step="500" />
+          </div>
+          <div class="price-mini">
+            <label for="pricePe">豪經艙</label>
+            <input type="number" id="pricePe" min="0" step="500" />
+          </div>
+          <div class="price-mini">
+            <label for="priceBiz">商務艙</label>
+            <input type="number" id="priceBiz" min="0" step="1000" />
+          </div>
+        </div>
+        <small>用於估算「每 1 哩折抵多少台幣價值（NT$/哩）」；一般 &ge; 0.6 元/哩就算高 CP 值。</small>
+      </div>
+    </div>
+
+    <!-- 右側試算結果 -->
+    <div>
+      <div class="kpi-grid">
+        <div class="glass kpi">
+          <div class="k-label">華航＋旅人卡 合計最高可用</div>
+          <div class="k-val" id="kpiTotalMiles">0 哩</div>
+          <div class="k-sub" id="kpiTotalSub"></div>
+        </div>
+        <div class="glass kpi">
+          <div class="k-label">旅人卡本次可轉出上限</div>
+          <div class="k-val" id="kpiHsbcUsable">0 哩</div>
+          <div class="k-sub" id="kpiHsbcSub"></div>
+        </div>
+        <div class="glass kpi">
+          <div class="k-label">目的地對應華航分區</div>
+          <div class="k-val" id="kpiZoneName" style="font-size: 17px;">-</div>
+          <div class="k-sub" id="kpiZoneSub"></div>
+        </div>
+      </div>
+
+      <div class="verdict-box" id="verdictBox">
+        <div class="verdict-title" id="verdictTitle">💡 智慧試算建議</div>
+        <div class="verdict-body" id="verdictBody"></div>
+      </div>
+
+      <div class="glass section-card">
+        <h3>
+          <span>🎫 方案 A：直接兌換「免費酬賓機票」</span>
+          <span style="font-size:12px; font-weight:500; color:var(--muted);" id="rewardRuleLabel"></span>
+        </h3>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>兌換艙等</th>
+                <th>所需哩程</th>
+                <th>狀態與還差</th>
+                <th>旅人卡建議轉出</th>
+                <th>預估每哩價值</th>
+              </tr>
+            </thead>
+            <tbody id="rewardTbody"></tbody>
+          </table>
+        </div>
+        <div class="note-box">
+          ⚠️ <strong>免費機票提醒：</strong>酬賓機票需另自付機場稅與燃油附加費（短程約 NT$2,500～4,000、長程約 NT$6,000～10,000），且<strong>無法累積飛行哩程與會籍旅次</strong>；若為公司出差（公司買票），通常改用下方「座艙升等」更划算。
+        </div>
+      </div>
+
+      <div class="glass section-card">
+        <h3>
+          <span>🥂 方案 B：現金買票 ＋ 哩程「座艙升等」</span>
+          <span style="font-size:12px; font-weight:500; color:var(--muted);" id="upgradeRuleLabel"></span>
+        </h3>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>升等路線（原票艙等）</th>
+                <th>所需哩程</th>
+                <th>狀態與還差</th>
+                <th>旅人卡建議轉出</th>
+                <th>升等每哩價值</th>
+              </tr>
+            </thead>
+            <tbody id="upgradeTbody"></tbody>
+          </table>
+        </div>
+        <div class="note-box">
+          💡 <strong>出差族／高階玩家秘訣：</strong>座艙升等可維持原購票艙等的<strong>飛行哩程與會籍累積</strong>！長程線（北美／歐洲／紐澳）購買可升等經濟艙（Y/B/M）或豪經艙（A/W/U）再升商務艙，每哩價值常高達 <strong>NT$ 0.80～1.50+／哩</strong>，通常是整張免費經濟艙的 2～3 倍以上 CP 值。<br>
+          ※ 台北往返美加／歐洲／紐澳之「標準經濟艙 K/V/T」依華航規定不適用直接升商務艙（需為豪經艙或靈活經濟艙 Y/B/M）。
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const ZONES = {
+    asia1: {
+      name: "亞洲（一）",
+      desc: "香港、廈門、福州",
+      hasPe: false,
+      refPrices: { eco: 8500, pe: 0, biz: 21000 },
+      reward: {
+        eco: { abundant: 18000, limited: 19000, scarce: 20000 },
+        pe:  { abundant: null, limited: null, scarce: null },
+        biz: { abundant: 50000, limited: 50000, scarce: 60000 }
+      },
+      upgradeSeg: {
+        ecoToPe_YBM: null, ecoToPe_KVT: null,
+        peToBiz_WU: null, peToBiz_A: null,
+        ecoToBiz_YBM: 10000, ecoToBiz_KVT: 13000
+      }
+    },
+    asia2: {
+      name: "亞洲（二）",
+      desc: "越南(河內/胡志明/峴港)、新加坡、福岡、沖繩、釜山、上海/北京等",
+      hasPe: true,
+      refPrices: { eco: 12000, pe: 22000, biz: 34000 },
+      reward: {
+        eco: { abundant: 30000, limited: 32000, scarce: 35000 },
+        pe:  { abundant: 40000, limited: 50000, scarce: 60000 },
+        biz: { abundant: 55000, limited: 70000, scarce: 80000 }
+      },
+      upgradeSeg: {
+        ecoToPe_YBM: 7000, ecoToPe_KVT: 10000,
+        peToBiz_WU: 8000, peToBiz_A: 12000,
+        ecoToBiz_YBM: 15000, ecoToBiz_KVT: 20000
+      }
+    },
+    asia3: {
+      name: "亞洲（三）",
+      desc: "東京(羽田/成田)、大阪、札幌、首爾、曼谷、清邁、峇里島、檳城、帛琉、仰光",
+      hasPe: true,
+      refPrices: { eco: 15500, pe: 26000, biz: 42000 },
+      reward: {
+        eco: { abundant: 35000, limited: 38000, scarce: 40000 },
+        pe:  { abundant: 40000, limited: 50000, scarce: 60000 },
+        biz: { abundant: 60000, limited: 75000, scarce: 90000 }
+      },
+      upgradeSeg: {
+        ecoToPe_YBM: 7000, ecoToPe_KVT: 10000,
+        peToBiz_WU: 8000, peToBiz_A: 12000,
+        ecoToBiz_YBM: 15000, ecoToBiz_KVT: 20000
+      }
+    },
+    india: {
+      name: "亞洲（二・德里）",
+      desc: "印度（德里）",
+      hasPe: true,
+      refPrices: { eco: 22000, pe: 36000, biz: 62000 },
+      reward: {
+        eco: { abundant: 30000, limited: 32000, scarce: 35000 },
+        pe:  { abundant: 40000, limited: 50000, scarce: 60000 },
+        biz: { abundant: 55000, limited: 70000, scarce: 80000 }
+      },
+      upgradeSeg: {
+        ecoToPe_YBM: 7000, ecoToPe_KVT: 10000,
+        peToBiz_WU: 8000, peToBiz_A: 12000,
+        ecoToBiz_YBM: 20000, ecoToBiz_KVT: 25000
+      }
+    },
+    oceania: {
+      name: "紐西蘭／澳洲",
+      desc: "雪梨、墨爾本、布里斯本、奧克蘭",
+      hasPe: true,
+      refPrices: { eco: 32000, pe: 55000, biz: 115000 },
+      reward: {
+        eco: { abundant: 80000, limited: 90000, scarce: 105000 },
+        pe:  { abundant: 110000, limited: 120000, scarce: 130000 },
+        biz: { abundant: 150000, limited: 170000, scarce: 190000 }
+      },
+      upgradeSeg: {
+        ecoToPe_YBM: 18000, ecoToPe_KVT: 25000,
+        peToBiz_WU: 30000, peToBiz_A: 35000,
+        ecoToBiz_YBM: 45000, ecoToBiz_KVT: null
+      }
+    },
+    na_west: {
+      name: "北美洲（美加西岸／芝加哥等）",
+      desc: "舊金山、洛杉磯、安大略、西雅圖、溫哥華、鳳凰城等（不含紐約）",
+      hasPe: true,
+      refPrices: { eco: 36000, pe: 62000, biz: 145000 },
+      reward: {
+        eco: { abundant: 80000, limited: 90000, scarce: 105000 },
+        pe:  { abundant: 120000, limited: 135000, scarce: 150000 },
+        biz: { abundant: 160000, limited: 180000, scarce: 200000 }
+      },
+      upgradeSeg: {
+        ecoToPe_YBM: 18000, ecoToPe_KVT: 25000,
+        peToBiz_WU: 30000, peToBiz_A: 35000,
+        ecoToBiz_YBM: 60000, ecoToBiz_KVT: null
+      }
+    },
+    nyc: {
+      name: "美國紐約（JFK）",
+      desc: "台北往返紐約直飛航線",
+      hasPe: true,
+      refPrices: { eco: 42000, pe: 72000, biz: 175000 },
+      reward: {
+        eco: { abundant: 90000, limited: 100000, scarce: 110000 },
+        pe:  { abundant: 120000, limited: 145000, scarce: 160000 },
+        biz: { abundant: 160000, limited: 190000, scarce: 210000 }
+      },
+      upgradeSeg: {
+        ecoToPe_YBM: 22000, ecoToPe_KVT: 28000,
+        peToBiz_WU: 34000, peToBiz_A: 40000,
+        ecoToBiz_YBM: 60000, ecoToBiz_KVT: null
+      }
+    },
+    europe: {
+      name: "歐洲航線",
+      desc: "阿姆斯特丹、法蘭克福、倫敦、維也納、羅馬、布拉格",
+      hasPe: true,
+      refPrices: { eco: 38000, pe: 66000, biz: 155000 },
+      reward: {
+        eco: { abundant: 90000, limited: 105000, scarce: 110000 },
+        pe:  { abundant: 120000, limited: 130000, scarce: 140000 },
+        biz: { abundant: 160000, limited: 190000, scarce: 210000 }
+      },
+      upgradeSeg: {
+        ecoToPe_YBM: 18000, ecoToPe_KVT: 25000,
+        peToBiz_WU: 30000, peToBiz_A: 35000,
+        ecoToBiz_YBM: 60000, ecoToBiz_KVT: null
+      }
+    }
+  };
+
+  const QUICK_DESTS = [
+    { label: "🇻🇳 越南（河內/胡志明）", zone: "asia2" },
+    { label: "🇯🇵 東京/大阪/札幌", zone: "asia3" },
+    { label: "🇯🇵 福岡/沖繩", zone: "asia2" },
+    { label: "🇰🇷 韓國首爾", zone: "asia3" },
+    { label: "🇹🇭 泰國曼谷/清邁", zone: "asia3" },
+    { label: "🇸🇬 新加坡", zone: "asia2" },
+    { label: "🇭🇰 香港", zone: "asia1" },
+    { label: "🇺🇸 美國（舊金山/洛杉磯）", zone: "na_west" },
+    { label: "🇺🇸 美國紐約", zone: "nyc" },
+    { label: "🇪🇺 歐洲（英/德/荷/奧/義/捷）", zone: "europe" },
+    { label: "🇦🇺🇳🇿 澳洲/紐西蘭", zone: "oceania" }
+  ];
+
+  const KEYWORD_MAP = [
+    { keys: ["香港", "hk", "廈門", "福州"], zone: "asia1" },
+    { keys: ["東京", "成田", "羽田", "大阪", "關西", "札幌", "北海道", "首爾", "韓國", "仁川", "金浦", "曼谷", "清邁", "泰國", "峇里島", "巴里島", "檳城", "帛琉", "仰光", "緬甸"], zone: "asia3" },
+    { keys: ["德里", "印度"], zone: "india" },
+    { keys: ["紐約", "jfk", "nyc", "new york"], zone: "nyc" },
+    { keys: ["美國", "加拿大", "美加", "北美", "舊金山", "洛杉磯", "芝加哥", "西雅圖", "溫哥華", "鳳凰城", "安大略", "sfo", "lax", "ord", "yvr", "sea"], zone: "na_west" },
+    { keys: ["歐洲", "法國", "巴黎", "德國", "法蘭克福", "荷蘭", "阿姆斯特丹", "英國", "倫敦", "奧地利", "維也納", "義大利", "羅馬", "捷克", "布拉格"], zone: "europe" },
+    { keys: ["澳洲", "紐西蘭", "紐澳", "雪梨", "墨爾本", "布里斯本", "奧克蘭"], zone: "oceania" },
+    { keys: ["越南", "河內", "胡志明", "峴港", "日本", "福岡", "沖繩", "名古屋", "熊本", "高松", "廣島", "釜山", "新加坡", "馬來西亞", "吉隆坡", "菲律賓", "馬尼拉", "宿霧", "印尼", "雅加達", "柬埔寨", "金邊", "大陸", "中國", "上海", "北京", "廣州", "深圳", "成都", "關島"], zone: "asia2" }
+  ];
+
+  let state = {
+    zoneId: "asia2",
+    tripType: "round",
+    tier: "abundant"
+  };
+
+  const el = (id) => document.getElementById(id);
+
+  function detectZone(input) {
+    const q = (input || "").trim().toLowerCase();
+    if (!q) return state.zoneId;
+    for (const rule of KEYWORD_MAP) {
+      if (rule.keys.some(k => q.includes(k))) return rule.zone;
+    }
+    return state.zoneId;
+  }
+
+  function applyZonePrices(zoneId) {
+    const z = ZONES[zoneId];
+    const mult = state.tripType === "oneway" ? 0.55 : 1;
+    el("priceEco").value = Math.round((z.refPrices.eco * mult) / 500) * 500;
+    el("pricePe").value  = z.refPrices.pe ? Math.round((z.refPrices.pe * mult) / 500) * 500 : 0;
+    el("priceBiz").value = Math.round((z.refPrices.biz * mult) / 500) * 500;
+  }
+
+  function formatNum(n) {
+    return Number(n || 0).toLocaleString("zh-TW");
+  }
+
+  function calcUsage(requiredMiles, ciMiles, hsbcPoints) {
+    const maxHsbcTransfer = hsbcPoints >= 3000 ? Math.floor(hsbcPoints / 500) * 500 : 0;
+    const totalAvail = ciMiles + maxHsbcTransfer;
+
+    if (ciMiles >= requiredMiles) {
+      return {
+        status: "ok",
+        shortfall: 0,
+        needHsbc: 0,
+        statusHtml: `<span class="status-pill st-ok">✅ 華航現有哩程足夠</span>`,
+        transferHtml: `<strong>0 點</strong>（旅人卡全部保留）`
+      };
+    }
+
+    const needRaw = requiredMiles - ciMiles;
+    let needTransfer = Math.ceil(needRaw / 500) * 500;
+    if (needTransfer < 3000) needTransfer = 3000;
+
+    if (hsbcPoints >= needTransfer) {
+      const leftoverInCi = (ciMiles + needTransfer) - requiredMiles;
+      const leftoverNote = leftoverInCi > 0 ? `<br><small style="color:var(--muted)">因 3,000 點起跳／500 級距，多轉 ${formatNum(leftoverInCi)} 哩留華航</small>` : "";
+      return {
+        status: "ok",
+        shortfall: 0,
+        needHsbc: needTransfer,
+        statusHtml: `<span class="status-pill st-ok">✅ 合併後可立即兌換</span>`,
+        transferHtml: `<strong style="color:var(--navy)">轉 ${formatNum(needTransfer)} 點</strong>（留 ${formatNum(hsbcPoints - needTransfer)} 點在滙豐）${leftoverNote}`
+      };
+    } else {
+      const totalGap = requiredMiles - totalAvail;
+      const hsbcNote = hsbcPoints < 3000
+        ? `旅人卡尚差 ${formatNum(3000 - hsbcPoints)} 點才達 3,000 起轉門檻`
+        : `若全轉後仍缺 <strong>${formatNum(totalGap)} 哩</strong>`;
+      const twdNeededOvs = totalGap * 15;
+      const twdNeededDom = totalGap * 18;
+      return {
+        status: totalGap <= 8000 ? "near" : "no",
+        shortfall: totalGap,
+        needHsbc: maxHsbcTransfer,
+        statusHtml: `<span class="status-pill ${totalGap <= 8000 ? "st-near" : "st-no"}">差 ${formatNum(totalGap)} 哩</span><div class="spend-helper">${hsbcNote}</div>`,
+        transferHtml: `<span style="color:var(--muted)">約再刷海外 $${formatNum(twdNeededOvs)} 或國內 $${formatNum(twdNeededDom)}</span>`
+      };
+    }
+  }
+
+  function renderCpBadge(valPerMile) {
+    if (!valPerMile || valPerMile <= 0) return "-";
+    const txt = `NT$ ${valPerMile.toFixed(2)} / 哩`;
+    if (valPerMile >= 0.70) return `<span class="cp-badge cp-high">超划算 ${txt}</span>`;
+    if (valPerMile >= 0.42) return `<span class="cp-badge cp-mid">合理 ${txt}</span>`;
+    return `<span class="cp-badge cp-low">偏低 ${txt}</span>`;
+  }
+
+  function render() {
+    const ciMiles = Math.max(0, Number(el("ciMiles").value) || 0);
+    const hsbcPoints = Math.max(0, Number(el("hsbcPoints").value) || 0);
+    const z = ZONES[state.zoneId];
+
+    const maxHsbcTransfer = hsbcPoints >= 3000 ? Math.floor(hsbcPoints / 500) * 500 : 0;
+    const totalAvail = ciMiles + maxHsbcTransfer;
+
+    if (hsbcPoints === 0) {
+      el("hsbcTransferNote").textContent = "目前尚未輸入旅人卡點數。";
+    } else if (hsbcPoints < 3000) {
+      el("hsbcTransferNote").innerHTML = `<span style="color:var(--warn-ink)">未滿 3,000 點起轉門檻（還差 ${formatNum(3000 - hsbcPoints)} 點），暫無法轉入華航。</span>`;
+    } else {
+      const rem = hsbcPoints - maxHsbcTransfer;
+      el("hsbcTransferNote").textContent = `目前最多可轉 ${formatNum(maxHsbcTransfer)} 哩進華航（剩餘 ${formatNum(rem)} 點留存）。`;
+    }
+
+    el("zoneBadge").textContent = `已辨識航線分區：${z.name}（${z.desc}）`;
+
+    el("kpiTotalMiles").textContent = `${formatNum(totalAvail)} 哩`;
+    el("kpiTotalSub").textContent = `華航 ${formatNum(ciMiles)} ＋ 旅人卡可轉 ${formatNum(maxHsbcTransfer)}`;
+    el("kpiHsbcUsable").textContent = `${formatNum(maxHsbcTransfer)} 哩`;
+    el("kpiHsbcSub").textContent = hsbcPoints >= 3000 ? `以 500 點為單位，1:1 等值轉入` : `需滿 3,000 點方可轉點`;
+    el("kpiZoneName").textContent = z.name;
+    el("kpiZoneSub").textContent = state.tripType === "round" ? "目前試算：來回行程" : "目前試算：單程／單段升等";
+
+    const priceEco = Number(el("priceEco").value) || 0;
+    const pricePe  = Number(el("pricePe").value) || 0;
+    const priceBiz = Number(el("priceBiz").value) || 0;
+    const taxEst = (state.zoneId.startsWith("asia") || state.zoneId === "india")
+      ? (state.tripType === "round" ? 3200 : 1600)
+      : (state.tripType === "round" ? 8000 : 4000);
+
+    const tripMult = state.tripType === "round" ? 1 : 0.5;
+    const segMult  = state.tripType === "round" ? 2 : 1;
+
+    el("rewardRuleLabel").textContent = `${state.tripType === "round" ? "來回標準" : "單程 50%"}｜${state.tier === "abundant" ? "充足" : state.tier === "limited" ? "有限" : "稀少/候補"}`;
+    el("upgradeRuleLabel").textContent = `${state.tripType === "round" ? "來回（2 航段）" : "單程（1 航段）"}`;
+
+    const candidates = [];
+
+    const rewardRows = [
+      { name: "經濟艙 (X)", raw: z.reward.eco[state.tier], cashRef: priceEco },
+      { name: "豪華經濟艙 (Z)", raw: z.reward.pe[state.tier], cashRef: pricePe },
+      { name: "商務艙／豪華商務艙 (O)", raw: z.reward.biz[state.tier], cashRef: priceBiz }
+    ];
+
+    let rewardHtml = "";
+    rewardRows.forEach(item => {
+      if (!item.raw) {
+        rewardHtml += `<tr><td>${item.name}</td><td colspan="4" style="color:var(--muted)">此航線無提供此艙等酬賓機票</td></tr>`;
+        return;
+      }
+      const req = Math.round(item.raw * tripMult);
+      const res = calcUsage(req, ciMiles, hsbcPoints);
+      const netSaved = Math.max(0, item.cashRef - taxEst);
+      const cp = req > 0 ? netSaved / req : 0;
+
+      if (res.status === "ok") {
+        candidates.push({
+          title: `兌換「${item.name}」免費機票`,
+          type: "reward",
+          req, needHsbc: res.needHsbc, cp, netSaved
+        });
+      }
+
+      rewardHtml += `
+        <tr>
+          <td><strong>${item.name}</strong></td>
+          <td><strong>${formatNum(req)}</strong> 哩</td>
+          <td>${res.statusHtml}</td>
+          <td>${res.transferHtml}</td>
+          <td>${renderCpBadge(cp)}<br><small style="color:var(--muted)">約省票價 $${formatNum(netSaved)}（扣稅後）</small></td>
+        </tr>`;
+    });
+    el("rewardTbody").innerHTML = rewardHtml;
+
+    const upgradeRows = [
+      {
+        name: "經濟艙 (標準 K/V/T) ➔ 豪經艙",
+        seg: z.upgradeSeg.ecoToPe_KVT,
+        savedDiff: pricePe > priceEco ? (pricePe - priceEco) : 0
+      },
+      {
+        name: "經濟艙 (靈活 Y/B/M) ➔ 豪經艙",
+        seg: z.upgradeSeg.ecoToPe_YBM,
+        savedDiff: pricePe > priceEco ? Math.max(0, (pricePe - priceEco * 1.25)) : 0
+      },
+      {
+        name: "豪經艙 (標準 A) ➔ 豪華商務艙",
+        seg: z.upgradeSeg.peToBiz_A,
+        savedDiff: priceBiz > pricePe && pricePe > 0 ? (priceBiz - pricePe) : 0
+      },
+      {
+        name: "豪經艙 (靈活 W/U) ➔ 豪華商務艙",
+        seg: z.upgradeSeg.peToBiz_WU,
+        savedDiff: priceBiz > pricePe && pricePe > 0 ? Math.max(0, (priceBiz - pricePe * 1.15)) : 0
+      },
+      {
+        name: "經濟艙 (標準 K/V/T) ➔ 商務艙",
+        seg: z.upgradeSeg.ecoToBiz_KVT,
+        savedDiff: priceBiz > priceEco ? (priceBiz - priceEco) : 0
+      },
+      {
+        name: "經濟艙 (靈活 Y/B/M) ➔ 商務艙",
+        seg: z.upgradeSeg.ecoToBiz_YBM,
+        savedDiff: priceBiz > priceEco ? Math.max(0, (priceBiz - priceEco * 1.25)) : 0
+      }
+    ];
+
+    let upgradeHtml = "";
+    upgradeRows.forEach(item => {
+      if (!item.seg) {
+        if (!z.hasPe && item.name.includes("豪經")) return;
+        upgradeHtml += `<tr><td>${item.name}</td><td colspan="4" style="color:var(--muted)">華航規定此航線／艙等不適用直接升等</td></tr>`;
+        return;
+      }
+      const req = item.seg * segMult;
+      const res = calcUsage(req, ciMiles, hsbcPoints);
+      const cp = req > 0 ? item.savedDiff / req : 0;
+
+      if (res.status === "ok" && item.savedDiff > 0) {
+        candidates.push({
+          title: `「${item.name}」座艙升等`,
+          type: "upgrade",
+          req, needHsbc: res.needHsbc, cp, netSaved: item.savedDiff
+        });
+      }
+
+      upgradeHtml += `
+        <tr>
+          <td><strong>${item.name}</strong></td>
+          <td><strong>${formatNum(req)}</strong> 哩</td>
+          <td>${res.statusHtml}</td>
+          <td>${res.transferHtml}</td>
+          <td>${renderCpBadge(cp)}<br><small style="color:var(--muted)">約省艙等價差 $${formatNum(Math.round(item.savedDiff))}</small></td>
+        </tr>`;
+    });
+    el("upgradeTbody").innerHTML = upgradeHtml;
+
+    const box = el("verdictBox");
+    const vTitle = el("verdictTitle");
+    const vBody = el("verdictBody");
+
+    if (candidates.length === 0) {
+      box.className = "verdict-box warn";
+      vTitle.textContent = "⏳ 目前總可用哩程尚不足以兌換本航線";
+      const ecoMin = Math.round(z.reward.eco[state.tier] * tripMult);
+      const upgMin = z.upgradeSeg.ecoToPe_YBM ? z.upgradeSeg.ecoToPe_YBM * segMult : (z.upgradeSeg.ecoToBiz_YBM * segMult);
+      const minNeed = Math.min(ecoMin, upgMin || ecoMin);
+      const gap = Math.max(0, minNeed - totalAvail);
+      vBody.innerHTML = `
+        目前合計可用 <strong>${formatNum(totalAvail)} 哩</strong>，距離本航線最低兌換門檻（${formatNum(minNeed)} 哩）還差 <strong>${formatNum(gap)} 哩</strong>。
+        <ul>
+          <li><strong>累積建議：</strong>先將點數留在滙豐旅人御璽卡不要急著轉出（避免華航 3 年效期開始倒數），再刷海外約 NT$ ${formatNum(gap * 15)} 或國內約 NT$ ${formatNum(gap * 18)} 即可達標。</li>
+          <li><strong>單程策略：</strong>若您目前試算「來回」，可嘗試切換上方為「單程（或只升一程）」，長程線常可先升等最累的去程或回程！</li>
+        </ul>`;
+    } else {
+      box.className = "verdict-box";
+      candidates.sort((a, b) => b.cp - a.cp);
+      const bestCp = candidates[0];
+      const bestReward = candidates.filter(c => c.type === "reward").sort((a, b) => b.req - a.req)[0];
+
+      vTitle.textContent = `🎯 最划算建議：優先考慮 ${bestCp.title}`;
+      let bullets = `
+        <li><strong>最高 CP 值首選：</strong>${bestCp.title}（需 <strong>${formatNum(bestCp.req)} 哩</strong>），每 1 哩約發揮 <strong>NT$ ${bestCp.cp.toFixed(2)}</strong> 的價值，約省下 <strong>NT$ ${formatNum(Math.round(bestCp.netSaved))}</strong>。</li>
+        <li><strong>旅人卡轉點指令：</strong>僅需從滙豐轉出 <strong>${formatNum(bestCp.needHsbc)} 點</strong>進華航即可（其餘 <strong>${formatNum(hsbcPoints - bestCp.needHsbc)} 點</strong>繼續留在滙豐保值不過期）。</li>`;
+
+      if (bestReward && bestReward.title !== bestCp.title) {
+        bullets += `<li><strong>想省現金／不買票首選：</strong>若不想花錢買機票，目前最高可換 <strong>${bestReward.title}</strong>（需 ${formatNum(bestReward.req)} 哩，每哩價值 NT$ ${bestReward.cp.toFixed(2)}）。</li>`;
+      }
+      if (bestCp.type === "upgrade") {
+        bullets += `<li><strong>出差搭機提醒：</strong>若是公司出差購買的機票，只要先確認票價艙等符合升等資格，用哩程升等不僅體驗大幅升級，原機票還能繼續累積飛行哩程與華航金卡保級旅次！</li>`;
+      }
+
+      vBody.innerHTML = `<ul>${bullets}</ul>`;
+    }
+  }
+
+  // Theme Toggle (Light/Dark Glass)
+  const themeBtn = el("themeToggle");
+  themeBtn.onclick = () => {
+    const html = document.documentElement;
+    const isDark = html.getAttribute("data-theme") === "dark";
+    html.setAttribute("data-theme", isDark ? "light" : "dark");
+    el("themeIcon").textContent = isDark ? "🌙" : "☀️";
+    el("themeLabel").textContent = isDark ? "深色玻璃" : "淺色玻璃";
+  };
+
+  // Init Quick Tags
+  const tagWrap = el("quickTags");
+  QUICK_DESTS.forEach(d => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "tag-btn" + (d.zone === state.zoneId ? " active" : "");
+    btn.textContent = d.label;
+    btn.onclick = () => {
+      el("destInput").value = d.label.replace(/^[^\s]+\s/, "");
+      state.zoneId = d.zone;
+      document.querySelectorAll(".tag-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      applyZonePrices(state.zoneId);
+      render();
+    };
+    tagWrap.appendChild(btn);
+  });
+
+  ["ciMiles", "hsbcPoints", "priceEco", "pricePe", "priceBiz"].forEach(id => {
+    el(id).addEventListener("input", render);
+  });
+
+  el("destInput").addEventListener("input", (e) => {
+    const newZone = detectZone(e.target.value);
+    if (newZone !== state.zoneId) {
+      state.zoneId = newZone;
+      document.querySelectorAll(".tag-btn").forEach(b => b.classList.remove("active"));
+      applyZonePrices(state.zoneId);
+    }
+    render();
+  });
+
+  document.querySelectorAll("#tripTypeSeg .seg-btn").forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll("#tripTypeSeg .seg-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      state.tripType = btn.dataset.val;
+      applyZonePrices(state.zoneId);
+      render();
+    };
+  });
+
+  document.querySelectorAll("#tierSeg .seg-btn").forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll("#tierSeg .seg-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      state.tier = btn.dataset.val;
+      render();
+    };
+  });
+
+  applyZonePrices(state.zoneId);
+  render();
+</script>
+</body>
+</html>
